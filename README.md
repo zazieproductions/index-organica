@@ -157,7 +157,7 @@ npm run preview
 
 The build uses `vite-plugin-singlefile`, so `npm run build` emits a single self-contained `index.html` in `dist/` — there are no external JS/CSS bundles to serve.
 
-## Screenshots
+## Capturing Screenshots
 
 Real screenshots are captured from the running app with a headless-browser script:
 
