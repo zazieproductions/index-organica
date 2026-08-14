@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  --arch-bg: #050705;
+  --signal: #aaff00;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+* {
+  cursor: none;
+}
+
+body {
+  margin: 0;
+  background: var(--arch-bg);
+  overflow-x: hidden;
+  font-family: "Courier New", ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #c6ff4d;
+  color: #000;
+}
+
+/* thin themed scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.4);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(160, 160, 160, 0.4);
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateY(-120px);
+  }
+  100% {
+    transform: translateY(110vh);
+  }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.3; }
+  94% { opacity: 1; }
+  96% { opacity: 0.6; }
+  97% { opacity: 1; }
+}
+
+@keyframes drift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(6px, -8px); }
+  100% { transform: translate(0, 0); }
+}
+
+.flicker {
+  animation: flicker 5s infinite;
+}
+
+.chromatic-range {
+  height: 12px;
+  appearance: none;
+  background: linear-gradient(90deg, transparent, var(--signal));
+  border: 1px solid color-mix(in srgb, var(--signal) 55%, transparent);
+}
+
+.chromatic-range::-webkit-slider-thumb {
+  width: 8px;
+  height: 18px;
+  appearance: none;
+  background: var(--signal);
+  border: 1px solid #000;
+  box-shadow: 0 0 8px var(--signal);
+}
+
+.chromatic-range::-moz-range-thumb {
+  width: 8px;
+  height: 18px;
+  border-radius: 0;
+  background: var(--signal);
+  border: 1px solid #000;
+  box-shadow: 0 0 8px var(--signal);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    cursor: auto;
+  }
+}
