@@ -14,10 +14,12 @@ interface Props {
     window: () => void;
     colors: () => void;
     relic: () => void;
+    audio: () => void;
   };
+  audioLive?: boolean;
 }
 
-export function HUD({ theme, frozen, diagnostic, seed, actions }: Props) {
+export function HUD({ theme, frozen, diagnostic, seed, actions, audioLive = false }: Props) {
   const [depth, setDepth] = useState(0);
   const [time, setTime] = useState("");
   useEffect(() => {
@@ -39,6 +41,7 @@ export function HUD({ theme, frozen, diagnostic, seed, actions }: Props) {
     ["S", frozen ? "RESUME" : "FREEZE", actions.freeze],
     ["D", "DIAG", actions.diag],
     ["C", "COLOR", actions.colors],
+    ["A", "AUDIO", actions.audio],
     ["G", "3D", actions.relic],
     ["+", "WINDOW", actions.window],
   ];
@@ -50,7 +53,7 @@ export function HUD({ theme, frozen, diagnostic, seed, actions }: Props) {
         <div className="pointer-events-auto" data-interactive>
           <div className="flex items-center gap-2">
             <span className="flicker text-lg leading-none">⊛</span>
-            <span className="text-sm font-bold tracking-[0.3em]">LIVING&nbsp;ARCHIVE</span>
+            <span className="text-sm font-bold tracking-[0.3em]">AGON&nbsp;//&nbsp;SIGNAL&nbsp;ENGINE</span>
           </div>
           <div className="mt-1 opacity-70">
             SYS://organism.<span style={{ color: theme.glow }}>{theme.name}</span>
@@ -61,9 +64,10 @@ export function HUD({ theme, frozen, diagnostic, seed, actions }: Props) {
           <div className="opacity-70">{time} UTC±?</div>
           <div className="opacity-50">DEPTH {Math.round(depth).toString().padStart(6, "0")}</div>
           <div className="mt-0.5 flex items-center justify-end gap-1">
+            {audioLive && <span className="animate-pulse" style={{ color: theme.glow }}>∿ SIGNAL LIVE</span>}
             {frozen && <span className="animate-pulse" style={{ color: theme.glow }}>◼ FROZEN</span>}
             {diagnostic && <span style={{ color: theme.glow }}>▦ DIAG</span>}
-            {!frozen && !diagnostic && <span className="opacity-60">● SCANNING</span>}
+            {!frozen && !diagnostic && !audioLive && <span className="opacity-60">● SCANNING</span>}
           </div>
         </div>
       </div>
@@ -116,13 +120,16 @@ export function BootOverlay({ theme, onDone }: { theme: Theme; onDone: () => voi
       "loading symbolic index ... 91%",
       "WARNING: index is not empty",
       "WARNING: something is already here",
+      "arming AGON signal engine ... MUTE",
       "calibrating retina ... OK",
-      "the archive is now watching.",
+      "the archive is now watching. it can also sing.",
     ];
     let i = 0;
     const iv = setInterval(() => {
-      setLines((l) => [...l, seq[i]]);
+      if (i >= seq.length) return; // guard against queued ticks after the final line
+      const line = seq[i];
       i++;
+      setLines((l) => (l.includes(line) ? l : [...l, line]));
       if (i >= seq.length) {
         clearInterval(iv);
         setTimeout(() => {
@@ -140,9 +147,9 @@ export function BootOverlay({ theme, onDone }: { theme: Theme; onDone: () => voi
       style={{ background: theme.bg, color: theme.ink, opacity: gone ? 0 : 1 }}
     >
       <div className="w-[min(90vw,520px)] text-[12px]">
-        <div className="mb-3 text-2xl tracking-[0.3em]" style={{ color: theme.glow }}>⊛ LIVING ARCHIVE</div>
+        <div className="mb-3 text-2xl tracking-[0.3em]" style={{ color: theme.glow }}>⊛ AGON // SIGNAL ENGINE</div>
         {lines.map((l, i) => (
-          <div key={i} className={i > 3 ? "" : "opacity-70"} style={{ color: l.startsWith("WARNING") ? theme.glow : undefined }}>
+          <div key={i} className={i > 3 ? "" : "opacity-70"} style={{ color: l?.startsWith("WARNING") ? theme.glow : undefined }}>
             {"> "}
             {l}
           </div>

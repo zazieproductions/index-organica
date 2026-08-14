@@ -8,6 +8,8 @@ import { SpawnLayer } from "./components/SpawnLayer";
 import { WindowLayer, useWindowManager, type WinDef } from "./components/Windows";
 import { HUD, BootOverlay } from "./components/HUD";
 import { ColorLab } from "./components/ColorLab";
+import { SignalEngine } from "./components/SignalEngine";
+import { engine } from "./lib/audio";
 
 function usePrefersReducedMotion() {
   const [r, setR] = useState(false);
@@ -28,6 +30,8 @@ export default function App() {
   const [themeIndex, setThemeIndex] = useState(0);
   const [tuning, setTuning] = useState<ColorTuning>({ ...DEFAULT_TUNING });
   const [colorLabOpen, setColorLabOpen] = useState(false);
+  const [audioOpen, setAudioOpen] = useState(true);
+  const [audioLive, setAudioLive] = useState(false);
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 0xffffff));
   const [frozen, setFrozen] = useState(false);
   const [diagnostic, setDiagnostic] = useState(false);
@@ -45,18 +49,33 @@ export default function App() {
   }, [theme]);
 
   const mutate = useCallback(() => {
-    setThemeIndex((i) => mutateThemeIndex(i, Math.random()));
+    setThemeIndex((i) => {
+      const next = mutateThemeIndex(i, Math.random());
+      engine.retune(next);
+      return next;
+    });
+    engine.blip(2, true);
     setFlash(true);
     setTimeout(() => setFlash(false), 180);
   }, []);
   const regen = useCallback(() => {
     setSeed(Math.floor(Math.random() * 0xffffff));
+    engine.blip(5, true);
     setFlash(true);
     setTimeout(() => setFlash(false), 180);
   }, []);
   const freeze = useCallback(() => setFrozen((f) => !f), []);
   const diag = useCallback(() => setDiagnostic((d) => !d), []);
   const toggleColorLab = useCallback(() => setColorLabOpen((open) => !open), []);
+  const toggleAudioPanel = useCallback(() => setAudioOpen((open) => !open), []);
+  const toggleAudioLive = useCallback(() => {
+    if (engine.running) {
+      void engine.stop();
+      setAudioLive(false);
+    } else {
+      void engine.start().then(() => setAudioLive(true));
+    }
+  }, []);
 
   const openWindow = useCallback(
     (kind?: WinDef["kind"], at?: { x: number; y: number }) => {
@@ -93,10 +112,12 @@ export default function App() {
       else if (k === "d") diag();
       else if (k === "c") toggleColorLab();
       else if (k === "g") openWindow("relic3d");
+      else if (k === "a") toggleAudioPanel();
+      else if (k >= "1" && k <= "8") engine.blip(Number(k) - 1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [mutate, regen, freeze, diag, toggleColorLab, openWindow, closeAll]);
+  }, [mutate, regen, freeze, diag, toggleColorLab, toggleAudioPanel, openWindow, closeAll]);
 
   // seed a couple of windows after boot
   useEffect(() => {
@@ -128,8 +149,13 @@ export default function App() {
         frozen={frozen}
         diagnostic={diagnostic}
         seed={seed}
-        actions={{ mutate, regen, freeze, diag, window: () => openWindow(), colors: toggleColorLab, relic: () => openWindow("relic3d") }}
+        actions={{ mutate, regen, freeze, diag, window: () => openWindow(), colors: toggleColorLab, relic: () => openWindow("relic3d"), audio: toggleAudioPanel }}
+        audioLive={audioLive}
       />
+
+      {audioOpen && (
+        <SignalEngine theme={theme} live={audioLive} onToggle={toggleAudioLive} onClose={() => setAudioOpen(false)} />
+      )}
 
       {colorLabOpen && (
         <ColorLab
