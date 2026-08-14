@@ -1,14 +1,20 @@
 # INDEX ORGANICA — ⊛ LIVING ARCHIVE
 
-An endlessly scrolling field of procedurally generated specimens, spatial relics, and anomalies that assembles itself from a single seed number and can never be exhausted — part digital archive, part synthetic organism, part institution that has grown past its keepers.
+A generative, endlessly scrolling archive of procedurally generated specimens, spatial relics, and anomalies that assembles itself from a single seed number and can never be exhausted — part digital archive, part synthetic organism, part institution that has grown past its keepers.
 
-**Created by Zazie Productions**
+**Created by [Zazie Productions](https://github.com/zazieproductions)**
 
-[![Project interface preview](docs/images/project-preview.png)](https://REPLACE_WITH_LIVE_DEMO_URL)
+> Click the preview below to open the interactive project.
 
-> The `LIVE_DEMO_URL` above is a placeholder. Replace it with the deployed URL once the project is live (see [Deployment](#deployment)).
+[![Interactive project preview](docs/images/project-preview.png)](https://zazieproductions.github.io/index-organica/)
 
-[![Launch Live Project](https://img.shields.io/badge/Launch-Live_Project-black?style=for-the-badge)](https://REPLACE_WITH_LIVE_DEMO_URL)
+[![Open Interactive Project](https://img.shields.io/badge/Open-Interactive_Project-111111?style=for-the-badge)](https://zazieproductions.github.io/index-organica/)
+
+[![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)](#) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)](#) [![Vite](https://img.shields.io/badge/Vite-7-646cff?logo=vite&logoColor=white)](#) [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss&logoColor=white)](#) [![Framer Motion](https://img.shields.io/badge/Framer_Motion-13-ec407a)](#)
+
+**No sound.** The archive is silent — there is no Web Audio layer, so no volume warning or headphones are required.
+
+**Quick start:** `npm install && npm run dev`, then open `http://localhost:5173`. Scroll, click the void, and press `M` · `R` · `S` · `D` · `C` · `G` to mutate, regenerate, freeze, diagnose, retune, and summon a spatial relic.
 
 ---
 
@@ -29,7 +35,7 @@ It is at once a tool and an artwork: a procedurally infinite museum that behaves
 
 ## Live Demo
 
-> **Live URL:** `https://REPLACE_WITH_LIVE_DEMO_URL` — replace with the deployed address.
+> **Live URL:** https://zazieproductions.github.io/index-organica/
 
 The project runs entirely in the browser. Things to know on first load:
 
@@ -151,31 +157,42 @@ npm run preview
 
 The build uses `vite-plugin-singlefile`, so `npm run build` emits a single self-contained `index.html` in `dist/` — there are no external JS/CSS bundles to serve.
 
+## Screenshots
+
+Real screenshots are captured from the running app with a headless-browser script:
+
+```bash
+npm install
+npx playwright install chromium   # first run only
+npm run capture:screenshots       # writes docs/images/project-{preview,active,detail}.png
+npm run generate:social           # builds the 1280x640 GitHub social-preview card
+```
+
+The capture script boots the app, waits out the terminal boot sequence, drives the Chromatic Lab and a spatial relic, and saves three PNGs into `docs/images/` (no browser chrome, cursor, or devtools in the frames).
+
 ## Deployment
 
-The project is configured for GitHub Pages, but **deployment is not yet set up** — the following still needs to be added.
+The project is configured to deploy to GitHub Pages at:
 
-1. **Vite `base`** — add a `base` setting to `vite.config.ts` so asset URLs resolve under the repository sub-path. For this repository:
+```text
+https://zazieproductions.github.io/index-organica/
+```
 
-   ```ts
-   export default defineConfig({
-     base: "/index-organica/",
-     plugins: [react(), tailwindcss(), viteSingleFile()],
-     // ...
-   });
-   ```
+Everything required is committed to the repository:
 
-   > The single-file plugin inlines most assets, so the main thing `base` governs is the resolved path when the page is served from `zazieproductions.github.io/index-organica/`.
+1. **Vite `base`** — `vite.config.ts` sets `base: "/index-organica/"` for production builds so asset URLs resolve under the repository sub-path (dev keeps the root base, so `npm run dev` stays at `http://localhost:5173/`).
 
-2. **GitHub Actions workflow** — none exists yet. Create `.github/workflows/deploy.yml` to run `npm install`, `npm run build`, and publish `dist/` with `actions/deploy-pages`. Once enabled (Settings → Pages → Source: GitHub Actions), the site will appear at:
+   > The single-file plugin inlines all JS and CSS into one `index.html`, so there are no external bundles to break under the sub-path.
 
-   ```text
-   https://zazieproductions.github.io/index-organica/
-   ```
+2. **GitHub Actions workflow** — `.github/workflows/deploy-pages.yml` installs dependencies, runs `npm run build`, and publishes `dist/` with `actions/upload-pages-artifact` + `actions/deploy-pages`. It triggers automatically on every push to `main`.
 
-3. **Repository Website field** — paste that URL into the repository's *Website* field (GitHub → Settings → General → Website) so it appears in the repo sidebar.
+3. **One-time activation (repository owner)** — enable Pages for Actions:
 
-4. **README link** — replace both `https://REPLACE_WITH_LIVE_DEMO_URL` placeholders above with the live URL.
+   > GitHub → **Settings** → **Pages** → **Source: GitHub Actions**
+
+   After that, the next push to `main` (or a manual run from the *Actions* tab) deploys the site. If the workflow file is not present on `main` yet, add `.github/workflows/deploy-pages.yml` from this branch first.
+
+4. **Repository Website field** — paste the live URL into *GitHub → Settings → General → Website* so it appears in the repo sidebar.
 
 ## Controls
 
@@ -200,15 +217,15 @@ The project is configured for GitHub Pages, but **deployment is not yet set up**
 
 ## Screenshots
 
-![Project interface](docs/images/project-preview.png)
+All screenshots are captured from the running application (see `scripts/capture-screenshots.mjs`). Click any image to open the live project.
 
-A screenshot has not yet been captured. Take one from the running project and save it at:
+### Active System
 
-```text
-docs/images/project-preview.png
-```
+[![Active project interface](docs/images/project-active.png)](https://zazieproductions.github.io/index-organica/)
 
-For the most representative image: scroll to a band that contains a relic and an anomaly, open the Chromatic Lab, and capture a clean widescreen view with no browser chrome, developer tools, desktop clutter, or visible cursor (press `Esc` to close the windows first if needed).
+### Interface Detail
+
+[![Project interface detail](docs/images/project-detail.png)](https://zazieproductions.github.io/index-organica/)
 
 ## Design and Concept
 
@@ -290,9 +307,25 @@ All specimen, relic, sigil, and filter artwork is generated procedurally in code
 
 ## Repository Metadata
 
-**GitHub repository description**
+**GitHub repository description** (under 160 characters — mentions the live demo):
 
-> A generative, endlessly scrolling archive of procedural specimens, relics and anomalies — a living index in React, SVG and Canvas.
+> A generative, endlessly scrolling archive of procedural specimens, relics and anomalies. Live demo: zazieproductions.github.io/index-organica
+
+**Website field**
+
+Set *GitHub → Settings → General → Website* to:
+
+```text
+https://zazieproductions.github.io/index-organica/
+```
+
+**Social preview**
+
+A 1280 × 640 social-preview card is committed at `docs/images/github-social-preview.png` (built from the real app screenshot — see `scripts/generate-social-preview.mjs`). Upload it under:
+
+```text
+Repository Settings → General → Social preview
+```
 
 **Suggested topics**
 
