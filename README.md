@@ -229,19 +229,28 @@ The build uses `vite-plugin-singlefile`, so `npm run build` emits a single self-
 
 ## Deployment
 
-Every push to `main` triggers the **Deploy to GitHub Pages** workflow, which builds the project and publishes `dist/` to:
+The live site is published from the prebuilt, self-contained files in [`docs/`](docs/):
+
+- [`docs/index.html`](docs/index.html) — the production app
+- [`docs/404.html`](docs/404.html) — SPA fallback for refreshes/deep links
+- [`docs/.nojekyll`](docs/.nojekyll) — tells GitHub Pages to publish the files as-is
+
+This makes the launch URL resolve directly without requiring a GitHub Actions workflow:
 
 ```text
 https://zazieproductions.github.io/index-organica/
 ```
 
-Vite's `base` is set to `/index-organica/` so all assets resolve under the project path, and the build is inlined into a single HTML file (with a `404.html` fallback) — refreshing any route always resolves back into the machine.
+Vite's `base` is set to `/index-organica/` so all assets resolve under the project path, and `vite-plugin-singlefile` inlines JavaScript and CSS into one HTML file.
 
-**One-time setup** (if the workflow or Pages site is not yet active):
+**One-time setup** (only if Pages has not been enabled yet):
 
-1. Ensure the workflow exists at `.github/workflows/deploy.yml` — a canonical copy is kept at [`docs/deploy-workflow.yml`](docs/deploy-workflow.yml); copy it into place via the GitHub web UI if missing (some app tokens cannot push workflow files).
-2. Enable Pages: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. Set the repository **Website** field (Settings → General) to the URL above.
+1. Open **Settings → Pages**.
+2. Under **Build and deployment → Source**, choose **Deploy from a branch**.
+3. Set the branch to `main` and the folder to `/docs`, then save.
+4. Optionally set the repository **Website** field (**Settings → General**) to the URL above.
+
+`docs/deploy-workflow.yml` remains as a canonical copy for repositories that prefer GitHub Actions deployment; copy it to `.github/workflows/deploy.yml` via the GitHub web UI if needed.
 
 ## Social preview
 
